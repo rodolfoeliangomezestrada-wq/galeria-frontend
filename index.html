@@ -4,29 +4,92 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galería Multimedia NoSQL</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0a0a0f; color: white; min-height: 100vh; }
+
+    /* Header */
+    header { background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 30px 40px; text-align: center; border-bottom: 1px solid #0f3460; }
+    header h1 { font-size: 2.5rem; font-weight: 900; background: linear-gradient(90deg, #e94560, #0f3460, #533483); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 3px; }
+    header p { color: #aaa; margin-top: 8px; font-size: 14px; }
+
+    /* Formulario */
+    .form-section { background: #16213e; padding: 30px 40px; border-bottom: 1px solid #0f3460; }
+    .form-section h2 { color: #e94560; margin-bottom: 20px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 800px; margin: 0 auto; }
+    .form-grid input, .form-grid textarea { background: #0a0a0f; border: 1px solid #0f3460; color: white; padding: 12px 15px; border-radius: 8px; font-size: 14px; transition: border 0.2s; }
+    .form-grid input:focus, .form-grid textarea:focus { outline: none; border-color: #e94560; }
+    .form-grid input[type="text"]:first-child { grid-column: 1 / -1; }
+    .form-grid textarea { grid-column: 1 / -1; height: 70px; resize: none; }
+    .form-grid input::placeholder, .form-grid textarea::placeholder { color: #555; }
+    .file-label { background: #0a0a0f; border: 1px dashed #0f3460; color: #aaa; padding: 12px 15px; border-radius: 8px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .file-label:hover { border-color: #e94560; color: white; }
+    input[type="file"] { display: none; }
+    .btn-subir { grid-column: 1 / -1; padding: 14px; background: linear-gradient(135deg, #e94560, #533483); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; letter-spacing: 1px; transition: opacity 0.2s; }
+    .btn-subir:hover { opacity: 0.85; }
+
+    /* Stats */
+    .stats { display: flex; gap: 15px; padding: 25px 40px; flex-wrap: wrap; }
+    .stat { background: #16213e; padding: 15px 25px; border-radius: 10px; border: 1px solid #0f3460; text-align: center; min-width: 130px; }
+    .stat .numero { font-size: 1.8rem; font-weight: bold; color: #e94560; }
+    .stat .label { font-size: 12px; color: #aaa; margin-top: 3px; }
+
+    /* Galería */
+    .galeria-section { padding: 10px 40px 40px; }
+    .galeria-section h2 { color: #aaa; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; }
+    .galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+
+    /* Cards */
+    .card { background: #16213e; border-radius: 12px; overflow: hidden; border: 1px solid #0f3460; transition: transform 0.2s, border-color 0.2s; }
+    .card:hover { transform: translateY(-4px); border-color: #e94560; }
+    .card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .card-body { padding: 15px; }
+    .card-titulo { font-size: 16px; font-weight: bold; margin-bottom: 6px; }
+    .card-desc { font-size: 13px; color: #aaa; margin-bottom: 10px; line-height: 1.5; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+    .tag { background: #e9456020; color: #e94560; border: 1px solid #e9456040; padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+    .card-fecha { font-size: 11px; color: #555; margin-bottom: 12px; }
+    audio { width: 100%; margin-bottom: 12px; filter: invert(1) hue-rotate(180deg); }
+    .card-acciones { display: flex; gap: 8px; }
+    .btn-editar { flex: 1; padding: 8px; background: #53348320; color: #a855f7; border: 1px solid #53348340; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; }
+    .btn-eliminar { flex: 1; padding: 8px; background: #e9456020; color: #e94560; border: 1px solid #e9456040; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; }
+    .btn-editar:hover { background: #533483; color: white; }
+    .btn-eliminar:hover { background: #e94560; color: white; }
+
+    .vacio { text-align: center; color: #333; padding: 60px; font-size: 1.1rem; grid-column: 1/-1; }
+    .cargando { text-align: center; color: #555; padding: 40px; grid-column: 1/-1; }
+  </style>
 </head>
-<body class="bg-gray-100 p-8">
+<body>
 
-  <h1 class="text-3xl font-bold text-center text-blue-700 mb-8">🎵 Galería Multimedia NoSQL</h1>
+  <header>
+    <h1>◈ MEDIA VAULT</h1>
+    <p>Galería Multimedia NoSQL en la Nube</p>
+  </header>
 
-  <!-- Formulario -->
-  <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md mb-10">
-    <h2 class="text-xl font-bold mb-4 text-gray-800">Subir Elemento</h2>
-    <input type="text" id="titulo" placeholder="Título" class="w-full border p-2 rounded mb-3">
-    <textarea id="descripcion" placeholder="Descripción" class="w-full border p-2 rounded mb-3"></textarea>
-    <input type="text" id="tags" placeholder="Etiquetas (ej: música, paisaje, arte)" class="w-full border p-2 rounded mb-3">
-    <label class="block font-medium mb-1">Imagen (PNG/JPG):</label>
-    <input type="file" id="imagen" accept="image/*" class="w-full mb-3">
-    <label class="block font-medium mb-1">Audio (MP3/WAV):</label>
-    <input type="file" id="audio" accept="audio/*" class="w-full mb-3">
-    <button onclick="subirElemento()" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700">
-      ☁️ Guardar en la Nube
-    </button>
+  <div class="form-section">
+    <h2>↑ Subir Elemento</h2>
+    <div class="form-grid">
+      <input type="text" id="titulo" placeholder="Título del elemento">
+      <input type="text" id="tags" placeholder="Etiquetas: música, arte, paisaje">
+      <textarea id="descripcion" placeholder="Descripción..."></textarea>
+      <label class="file-label" for="imagen">🖼️ <span id="labelImagen">Seleccionar imagen (PNG/JPG)</span></label>
+      <input type="file" id="imagen" accept="image/*" onchange="updateLabel('imagen', 'labelImagen')">
+      <label class="file-label" for="audio">🎵 <span id="labelAudio">Seleccionar audio (MP3/WAV)</span></label>
+      <input type="file" id="audio" accept="audio/*" onchange="updateLabel('audio', 'labelAudio')">
+      <button class="btn-subir" onclick="subirElemento()">☁️ GUARDAR EN LA NUBE</button>
+    </div>
   </div>
 
-  <!-- Galería -->
-  <div id="galeria" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto"></div>
+  <div class="stats">
+    <div class="stat"><div class="numero" id="stat-total">0</div><div class="label">Elementos</div></div>
+    <div class="stat"><div class="numero" id="stat-tag">-</div><div class="label">Tag más usado</div></div>
+  </div>
+
+  <div class="galeria-section">
+    <h2>◈ Colección</h2>
+    <div class="galeria" id="galeria"><div class="cargando">Cargando...</div></div>
+  </div>
 
   <script src="app.js"></script>
 </body>
