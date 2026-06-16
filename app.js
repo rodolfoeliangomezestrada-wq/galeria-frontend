@@ -83,5 +83,5 @@ async function eliminarElemento(id) {
   await fetch(`${API_URL}/${id}`, { method: "DELETE" });
   cargarGaleria();
 }
-
+    
 cargarGaleria();
